@@ -1,23 +1,25 @@
 version: "3.9"
 
 services:
-
   nginx:
     build: ./nginx
+    container_name: nginx-server
     ports:
-      - "8082:80"
+      - "8081:80"
     networks:
       - app-net
 
   apache:
     build: ./apache
+    container_name: apache-server
     ports:
-      - "8083:80"
+      - "8082:80"
     networks:
       - app-net
 
   node:
     build: ./nodejs
+    container_name: node-app
     ports:
       - "3001:3000"
     networks:
@@ -25,8 +27,23 @@ services:
 
   python:
     build: ./python
+    container_name: python-app
     ports:
       - "5001:5000"
+    networks:
+      - app-net
+
+  php:
+    build: ./php
+    container_name: php-server
+    ports:
+      - "8083:80"
+    networks:
+      - app-net
+
+  java:
+    build: ./java
+    container_name: java-app
     networks:
       - app-net
 
@@ -43,9 +60,78 @@ services:
     networks:
       - app-net
 
+  postgresql:
+    image: postgres:16-alpine
+    container_name: postgres-db
+    environment:
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: testpg
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    networks:
+      - app-net
+
+  mongodb:
+    image: mongo:7.0
+    container_name: mongo-db
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - "27018:27017"
+    networks:
+      - app-net
+
+  redis:
+    image: redis:alpine
+    container_name: redis-cache
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6378:6379"
+    networks:
+      - app-net
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq-broker
+    ports:
+      - "15673:15672" 
+      - "5673:5672"   
+    networks:
+      - app-net
+
+  zookeeper:
+    image: wurstmeister/zookeeper
+    container_name: zookeeper
+    ports:
+      - "2182:2181"
+    networks:
+      - app-net
+
+  kafka:
+    image: wurstmeister/kafka
+    container_name: kafka-server
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_ADVERTISED_PORT: 9093
+    depends_on:
+      - zookeeper
+    ports:
+      - "9093:9092"
+    networks:
+      - app-net
+
+
 networks:
   app-net:
     driver: bridge
 
+
 volumes:
   mysql-data:
+  postgres-data:
+  mongo-data:
+  redis-data:
