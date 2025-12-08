@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent worker
 
     environment {
         PROJECT_REPO = 'https://github.com/saransh-del/Container-project.git'
