@@ -44,6 +44,9 @@ services:
   java:
     build: ./java
     container_name: java-app
+    ports:
+      - "8085:8080"
+    command: ["tail", "-f", "/dev/null"]
     networks:
       - app-net
 
