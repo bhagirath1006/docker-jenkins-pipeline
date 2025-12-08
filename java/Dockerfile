@@ -1,9 +1,7 @@
-FROM openjdk:17-slim AS build
-WORKDIR /app
-COPY app.java .
-RUN javac app.java
+FROM eclipse-temurin:17-jdk
 
-FROM openjdk:17-slim
 WORKDIR /app
-COPY --from=build /app/app.class .
-CMD ["java", "app"]
+COPY App.java .
+
+RUN javac App.java
+CMD ["java", "App"]

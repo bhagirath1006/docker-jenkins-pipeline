@@ -1,2 +1,4 @@
-FROM php:8.2-apache-alpine
-COPY index.php /var/www/html/
+FROM php:8.2-apache
+
+WORKDIR /var/www/html
+COPY index.php .
