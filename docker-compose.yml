@@ -1,0 +1,51 @@
+version: "3.9"
+
+services:
+
+  nginx:
+    build: ./nginx
+    ports:
+      - "8082:80"
+    networks:
+      - app-net
+
+  apache:
+    build: ./apache
+    ports:
+      - "8083:80"
+    networks:
+      - app-net
+
+  node:
+    build: ./nodejs
+    ports:
+      - "3001:3000"
+    networks:
+      - app-net
+
+  python:
+    build: ./python
+    ports:
+      - "5001:5000"
+    networks:
+      - app-net
+
+  mysql:
+    image: mysql:8
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: testdb
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    networks:
+      - app-net
+
+networks:
+  app-net:
+    driver: bridge
+
+volumes:
+  mysql-data:
