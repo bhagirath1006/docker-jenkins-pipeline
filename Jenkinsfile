@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        PROJECT_REPO = 'https://github.com/saransh-del/Container-project.git'
+        PROJECT_REPO = 'https://github.com/bhagirath1006/docker-jenkins-pipeline.git'
         MIN_CONTAINER_COUNT = 12
     }
 
