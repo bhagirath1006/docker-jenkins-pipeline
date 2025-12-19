@@ -21,18 +21,26 @@ pipeline {
 
         stage('Clean Old Containers') {
             steps {
-                echo "Stopping and removing old containers..."
+                echo "Stopping old containers..."
                 sh '''
-                docker compose down --remove-orphans || true
+                if docker compose version >/dev/null 2>&1; then
+                    docker compose down || true
+                else
+                    docker-compose down || true
+                fi
                 '''
             }
         }
 
         stage('Build 12 Docker Images') {
             steps {
-                echo "Building Docker images for all 12 services..."
+                echo "Building Docker images..."
                 sh '''
-                docker compose build --no-cache
+                if docker compose version >/dev/null 2>&1; then
+                    docker compose build
+                else
+                    docker-compose build
+                fi
                 '''
             }
         }
@@ -41,25 +49,28 @@ pipeline {
             steps {
                 echo "Starting containers..."
                 sh '''
-                docker compose up -d
+                if docker compose version >/dev/null 2>&1; then
+                    docker compose up -d
+                else
+                    docker-compose up -d
+                fi
                 '''
             }
         }
 
         stage('Verify Deployment') {
             steps {
-                echo "Verifying container status..."
                 sh '''
                 docker ps
 
-                RUNNING_COUNT=$(docker ps --format '{{.Names}}' | wc -l)
-                echo "Running containers: $RUNNING_COUNT"
+                RUNNING=$(docker ps -q | wc -l)
+                echo "Running containers: $RUNNING"
 
-                if [ "$RUNNING_COUNT" -lt "$EXPECTED_CONTAINER_COUNT" ]; then
-                    echo " Deployment failed: Not all containers are running"
+                if [ "$RUNNING" -lt "$EXPECTED_CONTAINER_COUNT" ]; then
+                    echo " Not all containers are running"
                     exit 1
                 else
-                    echo " Deployment successful: All 12 containers are running"
+                    echo " All 12 containers are running"
                 fi
                 '''
             }
@@ -68,13 +79,10 @@ pipeline {
 
     post {
         success {
-            echo " Jenkins pipeline completed successfully"
+            echo " Deployment successful"
         }
         failure {
-            echo " Jenkins pipeline failed"
-        }
-        always {
-            echo "Pipeline execution finished"
+            echo " Deployment failed"
         }
     }
 }
