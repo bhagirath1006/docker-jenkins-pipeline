@@ -19,11 +19,12 @@ pipeline {
             steps {
                 echo "Cleaning old containers (if any)..."
                 sh '''
-                if docker compose version >/dev/null 2>&1; then
-                    docker compose down --remove-orphans || true
-                else
-                    docker-compose down --remove-orphans || true
-                fi
+                docker compose down
+                // if docker compose version >/dev/null 2>&1; then
+                //     docker compose down --remove-orphans || true
+                // else
+                //     docker-compose down --remove-orphans || true
+                // fi
                 '''
             }
         }
