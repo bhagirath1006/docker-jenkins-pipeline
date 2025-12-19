@@ -10,11 +10,12 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - jenkins-data:/var/jenkins_home
+      - /usr/bin/docker:/usr/bin/docker
     environment:
       - DOCKER_HOST=unix:///var/run/docker.sock
     networks:
       - app-net
-    user: "0:0"
+    privileged: true
 
   nginx:
     build: ./nginx
