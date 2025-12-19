@@ -1,6 +1,21 @@
 version: "3.9"
 
 services:
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins-server
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - jenkins-data:/var/jenkins_home
+    environment:
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    networks:
+      - app-net
+    user: "0:0"
+
   nginx:
     build: ./nginx
     container_name: nginx-server
@@ -138,3 +153,4 @@ volumes:
   postgres-data:
   mongo-data:
   redis-data:
+  jenkins-data:
