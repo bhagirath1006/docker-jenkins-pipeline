@@ -19,12 +19,7 @@ pipeline {
             steps {
                 echo "Cleaning old containers (if any)..."
                 sh '''
-                docker compose down
-                // if docker compose version >/dev/null 2>&1; then
-                //     docker compose down --remove-orphans || true
-                // else
-                //     docker-compose down --remove-orphans || true
-                // fi
+                docker compose down --remove-orphans || true
                 '''
             }
         }
@@ -33,11 +28,7 @@ pipeline {
             steps {
                 echo "Building all container images..."
                 sh '''
-                if docker compose version >/dev/null 2>&1; then
-                    docker compose build
-                else
-                    docker-compose build
-                fi
+                docker compose build
                 '''
             }
         }
@@ -46,11 +37,7 @@ pipeline {
             steps {
                 echo "Starting all containers..."
                 sh '''
-                if docker compose version >/dev/null 2>&1; then
-                    docker compose up -d
-                else
-                    docker-compose up -d
-                fi
+                docker compose up -d
                 '''
             }
         }
